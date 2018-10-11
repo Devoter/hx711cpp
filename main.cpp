@@ -30,6 +30,8 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    catchSigterm();
+
     const double offset = atof(argv[1]);
     const char *alignmentString = argv[2];
     const int movingAverage = atoi(argv[3]);
