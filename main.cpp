@@ -1,9 +1,28 @@
 #include <iostream>
 #include <cstdlib>
 #include <unistd.h>
+#include <signal.h>
 #include "hx711.h"
 #include "string_to_double.h"
 
+bool sigTerm = false;
+
+void onTerminate(int signum, siginfo_t *info, void *ptr)
+{
+    sigTerm = true;
+}
+
+void catchSigterm()
+{
+    static struct sigaction _sigact;
+
+    memset(&_sigact, 0, sizeof(_sigact));
+    _sigact.sa_sigaction = on_terminate;
+    _sigact.sa_flags = SA_SIGINFO;
+
+    sigaction(SIGTERM, &_sigact, NULL);
+    sigaction(SIGINT, &_sigact, NULL);
+}
 
 int main(int argc, char *argv[])
 {
@@ -34,8 +53,10 @@ int main(int argc, char *argv[])
     hx->reset();
     hx->start();
 
-    while (true)
+    while (sigterm)
         usleep(100000);
+
+    delete hx;
 
     return 0;
 }
