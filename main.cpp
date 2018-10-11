@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib>
+#include <cstring>
 #include <unistd.h>
 #include <signal.h>
 #include "hx711.h"
@@ -9,6 +10,7 @@ bool sigTerm = false;
 
 void onTerminate(int signum, siginfo_t *info, void *ptr)
 {
+    std::cerr << "TERM signal received" << std::endl;
     sigTerm = true;
 }
 
@@ -55,7 +57,7 @@ int main(int argc, char *argv[])
     hx->reset();
     hx->start();
 
-    while (sigterm)
+    while (!sigTerm)
         usleep(100000);
 
     delete hx;
