@@ -15,6 +15,7 @@ class HX711 {
     unsigned int m_times;
     double m_k;
     double m_b;
+    unsigned int m_fails;
     std::shared_ptr< MovingAverage<int32_t, double> > m_movingAverage;
     std::shared_ptr< MovingAverage<int32_t, int32_t> > m_timed;
 
@@ -30,6 +31,7 @@ public:
 
     inline void setReading(const bool reading) { m_reading = reading; }
     inline void setOnce(const bool once) { m_once = once; }
+    inline void resetFails() { m_fails = 0; }
 
     void start();
     void stop();
@@ -39,6 +41,7 @@ public:
     void powerUp();
     void reset();
     void push(const int32_t value);
+    void incFails();
 };
 
 #endif // HX711_H

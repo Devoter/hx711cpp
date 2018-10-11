@@ -4,7 +4,7 @@
 #include "double_to_string.h"
 #include "hx711.h"
 
-
+const unsigned int maxFails = 20;
 HX711 *instance = nullptr;
 
 void edge()
@@ -26,6 +26,8 @@ void edge()
     }   
                   
     if (data != 0x800000 && data != 0x7fffff && data != 0xffffff) {
+        instance->resetFails();
+
         if (data & 0x800000)
             data |= 0xff << 24; 
 
@@ -37,6 +39,8 @@ void edge()
         if (!instance->once())
             instance->push(data);
     }
+    else
+        instance->incFails();
 
     usleep(20000);
     if (instance->once())
@@ -53,6 +57,7 @@ HX711::HX711(const int dout, const int sck, const double offset, const int movin
     m_b = b;
     m_reading = false;
     m_once = false;
+    m_fails = 0;
     wiringPiSetupGpio();
     m_dout = dout;
     m_sck = sck;
@@ -127,3 +132,11 @@ void HX711::push(const int32_t value)
     std::cout << doubleToString(result) << std::endl;
 }
 
+void HX711::incFails()
+{
+    ++m_fails;
+    if (m_fails >= maxFails) {
+        reset();
+        m_fails = 0;
+    }
+}
