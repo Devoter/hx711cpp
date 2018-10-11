@@ -14,14 +14,14 @@ void onTerminate(int signum, siginfo_t *info, void *ptr)
 
 void catchSigterm()
 {
-    static struct sigaction _sigact;
+    static struct sigaction sigact;
 
-    memset(&_sigact, 0, sizeof(_sigact));
-    _sigact.sa_sigaction = on_terminate;
-    _sigact.sa_flags = SA_SIGINFO;
+    memset(&sigact, 0, sizeof(sigact));
+    sigact.sa_sigaction = onTerminate;
+    sigact.sa_flags = SA_SIGINFO;
 
-    sigaction(SIGTERM, &_sigact, NULL);
-    sigaction(SIGINT, &_sigact, NULL);
+    sigaction(SIGTERM, &sigact, NULL);
+    sigaction(SIGINT, &sigact, NULL);
 }
 
 int main(int argc, char *argv[])
