@@ -1,0 +1,45 @@
+#ifndef HX711_H
+#define HX711_H
+
+#include <memory>
+#include "moving_average.h"
+
+
+class HX711 {
+    int m_dout;
+    int m_sck;
+    unsigned char m_gain;
+    bool m_reading;
+    bool m_once;
+    double m_offset;
+    unsigned int m_times;
+    double m_k;
+    double m_b;
+    std::shared_ptr< MovingAverage<int32_t, double> > m_movingAverage;
+    std::shared_ptr< MovingAverage<int32_t, int32_t> > m_timed;
+
+public:
+    HX711(const int dout, const int sck, const double offset, const int movingAverageSize, const unsigned int times, const double k, const double b);
+    virtual ~HX711();
+
+    inline int dout() { return m_dout; }
+    inline int sck() { return m_sck; }
+    inline unsigned char gain() { return m_gain; }
+    inline bool reading() { return m_reading; }
+    inline bool once() { return m_once; }
+
+    inline void setReading(const bool reading) { m_reading = reading; }
+    inline void setOnce(const bool once) { m_once = once; }
+
+    void start();
+    void stop();
+    void read();
+    void setGain(const unsigned char gain);
+    void powerDown();
+    void powerUp();
+    void reset();
+    void push(const int32_t value);
+};
+
+#endif // HX711_H
+
