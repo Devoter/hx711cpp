@@ -50,17 +50,21 @@ int main(int argc, char *argv[])
     hx->setGain(1);
     hx->read();
 
-    while (hx->once())
-        usleep(100);
-    sleep(1);
-    
-    hx->reset();
-    hx->start();
-
-    while (!sigTerm)
+    while (hx->once() && !sigTerm)
         usleep(100000);
+
+    if (!sigTerm) {
+        sleep(1);
+    
+        hx->reset();
+        hx->start();
+
+        while (!sigTerm)
+            usleep(100000);
+    }
 
     delete hx;
 
     return 0;
 }
+
