@@ -64,8 +64,8 @@ HX711::HX711(const int dout, const int sck, const double offset, const int movin
     m_gain = 1;
     pinMode(m_dout, INPUT);
     pinMode(m_sck, OUTPUT);
-    m_movingAverage = std::make_shared< MovingAverage<int32_t, double> >(movingAverageSize);
-    m_timed = std::make_shared< MovingAverage<int32_t, int32_t> >(m_times);
+    m_movingAverage = std::make_shared< MovingAverage<double, double> >(movingAverageSize);
+    m_timed = std::make_shared< MovingAverage<int32_t, double> >(m_times);
 }
 
 HX711::~HX711()
