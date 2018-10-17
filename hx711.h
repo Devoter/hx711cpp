@@ -16,8 +16,8 @@ class HX711 {
     double m_k;
     double m_b;
     unsigned int m_fails;
-    std::shared_ptr< MovingAverage<int32_t, double> > m_movingAverage;
-    std::shared_ptr< MovingAverage<int32_t, int32_t> > m_timed;
+    std::shared_ptr< MovingAverage<double, double> > m_movingAverage;
+    std::shared_ptr< MovingAverage<int32_t, double> > m_timed;
 
 public:
     HX711(const int dout, const int sck, const double offset, const int movingAverageSize, const unsigned int times, const double k, const double b);
@@ -45,4 +45,3 @@ public:
 };
 
 #endif // HX711_H
-
