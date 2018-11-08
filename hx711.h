@@ -11,16 +11,20 @@ class HX711 {
     unsigned char m_gain;
     bool m_reading;
     bool m_once;
-    double m_offset;
     unsigned int m_times;
+    unsigned int m_movingAverageSize;
     double m_k;
     double m_b;
     unsigned int m_fails;
+    double m_deviationFactor;
+    double m_deviationValue;
     std::shared_ptr< MovingAverage<double, double> > m_movingAverage;
     std::shared_ptr< MovingAverage<int32_t, double> > m_timed;
 
 public:
-    HX711(const int dout, const int sck, const double offset, const int movingAverageSize, const unsigned int times, const double k, const double b);
+    HX711(const int dout, const int sck, const double offset, const unsigned int movingAverageSize,
+          const unsigned int times, const double k, const double b, const int deviationFactor,
+          const int deviationValue);
     virtual ~HX711();
 
     inline int dout() { return m_dout; }

@@ -18,6 +18,7 @@ public:
     inline std::size_t size() { return m_deque.size(); }
     D value();
     void push(const T item);
+    T front();
     void clear();
 };
 
@@ -53,6 +54,12 @@ void MovingAverage<T, D>::push(const T item)
 
     m_deque.push_back(item);
     m_dirty = true;
+}
+
+template <typename T, typename D>
+T MovingAverage::front()
+{
+    return m_deque.front();
 }
 
 template <typename T, typename D>

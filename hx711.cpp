@@ -49,12 +49,21 @@ void edge()
         instance->setReading(false);
 }
 
-HX711::HX711(const int dout, const int sck, const double offset, const int movingAverageSize, const unsigned int times, const double k, const double b)
+HX711::HX711(const int dout, const int sck, const double offset, const unsigned int movingAverageSize,
+             const unsigned int times, const double k, const double b, const int deviationFactor,
+             const int deviationValue)
 {
-    m_offset = offset;
     m_times = times;
     m_k = k;
-    m_b = b;
+    m_b = b + offset;
+    if (deviationFactor) {
+        m_deviationFactor = deviationFactor / 100.0;
+        m_deviationValue = deviationValue;
+    }
+    else {
+        m_deviationFactor = 0;
+        m_deviationValue = (deviationValue - m_b) / k;
+    }
     m_reading = false;
     m_once = false;
     m_fails = 0;
@@ -64,6 +73,7 @@ HX711::HX711(const int dout, const int sck, const double offset, const int movin
     m_gain = 1;
     pinMode(m_dout, INPUT);
     pinMode(m_sck, OUTPUT);
+    m_movingAverageSize = movingAverageSize;
     m_movingAverage = std::make_shared< MovingAverage<double, double> >(movingAverageSize);
     m_timed = std::make_shared< MovingAverage<int32_t, double> >(m_times);
 }
@@ -121,14 +131,51 @@ void HX711::reset()
 
 void HX711::push(const int32_t value)
 {
-    m_timed->push(value);
-
-    if (m_timed->size() < m_times)
+    if (m_movingAverage->size() < m_movingAverageSize) {
+        m_movingAverage->push(value);
         return;
+    }
+    else if (m_timed->size() < m_times) {
+        m_timed->push(value);
+        return;
+    }
+    else {
+#ifdef ALTERNATIVE_FILTERING
+        auto val = static_cast<double>(m_timed->front());
+        m_timed->push(value);
 
-    m_movingAverage->push(m_timed->value());
-    m_timed->clear();
-    const double result = m_movingAverage->value() * m_k + m_b + m_offset;
+        double factor;
+        auto maValue = m_movingAverage->value();
+        auto timedValue = m_timed->value();
+
+        if (m_deviationFactor)
+            factor = ((maValue * m_k + m_b) * m_deviationFactor + m_deviationValue - m_b) / m_k;
+        else
+            factor = m_deviationValue;
+
+        if (val < (maValue - factor) || val > (maValue + factor) ||
+                val < (timedValue - factor) || val > (timedValue + factor)) {
+            return;
+        }
+#else
+        auto val = static_cast<double>(m_timed->front()) * m_k + m_b;
+        m_timed->push(value);
+
+        auto maValue = m_movingAverage->value() * m_k + m_b;
+        auto maFactored = maValue * m_deviationFactor;
+        auto timedValue = m_timed->value() * m_k + m_b;
+        auto timedFactored = timedValue * m_deviationFactor;
+
+        if (val < (maValue - maFactored - m_deviationValue) || val > (maValue + maFactored + m_deviationValue) ||
+                val < (timedValue - timedFactored - m_deviationValue) ||
+                val > (timedValue + timedFactored + m_deviationValue)) {
+            return;
+        }
+#endif
+        m_movingAverage->push(val);
+    }
+
+    const double result = m_movingAverage->value() * m_k + m_b;
     std::cout << doubleToString(result) << std::endl;
 }
 
