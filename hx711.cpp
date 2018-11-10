@@ -141,18 +141,23 @@ void HX711::push(const int32_t value)
         auto maValue = m_movingAverage->value() * m_k + m_b;
         auto maFactored = maValue * m_deviationFactor;
 
-        if (val < (maValue - maFactored - m_deviationValue) || val > (maValue + maFactored + m_deviationValue))
-            return;
+        bool filtered = false;
+        if (val < (maValue - maFactored - m_deviationValue) || val > (maValue + maFactored + m_deviationValue)) {
+            filtered = true;
+        }
         else {
             auto deque = *(m_timed->deque());
             for (auto &el : deque) {
                 auto t = static_cast<double>(el) * m_k + m_b;
-                if (val < (t - maFactored - m_deviationValue) || val > (t + maFactored + m_deviationValue))
-                    return;
+                if (val < (t - maFactored - m_deviationValue) || val > (t + maFactored + m_deviationValue)) {
+                    filtered = true;
+                    break;
+                }
             }
         }
 
-        m_movingAverage->push(rawVal);
+        if (!filtered)
+            m_movingAverage->push(rawVal);
     }
 
     const double result = m_movingAverage->value() * m_k + m_b;
