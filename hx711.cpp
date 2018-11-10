@@ -56,14 +56,8 @@ HX711::HX711(const int dout, const int sck, const double offset, const unsigned 
     m_times = times;
     m_k = k;
     m_b = b + offset;
-    if (deviationFactor) {
-        m_deviationFactor = deviationFactor / 100.0;
-        m_deviationValue = deviationValue;
-    }
-    else {
-        m_deviationFactor = 0;
-        m_deviationValue = (deviationValue - m_b) / k;
-    }
+    m_deviationFactor = deviationFactor ? deviationFactor / 100.0 : 0;
+    m_deviationValue = deviationValue;
     m_reading = false;
     m_once = false;
     m_fails = 0;
@@ -140,39 +134,25 @@ void HX711::push(const int32_t value)
         return;
     }
     else {
-#ifdef ALTERNATIVE_FILTERING
-        auto val = static_cast<double>(m_timed->front());
-        m_timed->push(value);
-
-        double factor;
-        auto maValue = m_movingAverage->value();
-        auto timedValue = m_timed->value();
-
-        if (m_deviationFactor)
-            factor = ((maValue * m_k + m_b) * m_deviationFactor + m_deviationValue - m_b) / m_k;
-        else
-            factor = m_deviationValue;
-
-        if (val < (maValue - factor) || val > (maValue + factor) ||
-                val < (timedValue - factor) || val > (timedValue + factor)) {
-            return;
-        }
-#else
-        auto val = static_cast<double>(m_timed->front()) * m_k + m_b;
+        auto rawVal = static_cast<double>(m_timed->front());
+        auto val = rawVal * m_k + m_b;
         m_timed->push(value);
 
         auto maValue = m_movingAverage->value() * m_k + m_b;
         auto maFactored = maValue * m_deviationFactor;
-        auto timedValue = m_timed->value() * m_k + m_b;
-        auto timedFactored = timedValue * m_deviationFactor;
 
-        if (val < (maValue - maFactored - m_deviationValue) || val > (maValue + maFactored + m_deviationValue) ||
-                val < (timedValue - timedFactored - m_deviationValue) ||
-                val > (timedValue + timedFactored + m_deviationValue)) {
+        if (val < (maValue - maFactored - m_deviationValue) || val > (maValue + maFactored + m_deviationValue))
             return;
+        else {
+            auto deque = *(m_timed->deque());
+            for (auto &el : deque) {
+                auto t = static_cast<double>(el) * m_k + m_b;
+                if (val < (t - maFactored - m_deviationValue) || val > (t + maFactored + m_deviationValue))
+                    return;
+            }
         }
-#endif
-        m_movingAverage->push(val);
+
+        m_movingAverage->push(rawVal);
     }
 
     const double result = m_movingAverage->value() * m_k + m_b;

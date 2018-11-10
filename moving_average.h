@@ -19,6 +19,7 @@ public:
     D value();
     void push(const T item);
     T front();
+    inline std::deque<T> *deque() { return &m_deque; }
     void clear();
 };
 
@@ -57,7 +58,7 @@ void MovingAverage<T, D>::push(const T item)
 }
 
 template <typename T, typename D>
-T MovingAverage::front()
+T MovingAverage<T, D>::front()
 {
     return m_deque.front();
 }
