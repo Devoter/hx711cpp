@@ -13,7 +13,7 @@ class HX711 {
     bool m_once;
     unsigned int m_times;
     unsigned int m_movingAverageSize;
-    unsigned int m_retires;
+    unsigned int m_retries;
     unsigned int m_tries;
     double m_k;
     double m_b;
