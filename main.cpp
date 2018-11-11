@@ -28,7 +28,7 @@ void catchSigterm()
 
 int main(int argc, char *argv[])
 {
-    if (argc != 9) {
+    if (argc != 10) {
         return 1;
     }
 
@@ -42,13 +42,14 @@ int main(int argc, char *argv[])
     const int sck = atoi(argv[6]);
     const int deviationFactor = atoi(argv[7]);
     const int deviationValue = atoi(argv[8]);
+    const int retries = atoi(argv[8]);
 
     double k, b;
 
     k = stringToDouble(alignmentString);
     b = stringToDouble(alignmentString + 16);
 
-    auto hx = new HX711(dout, sck, offset, movingAverage, times, k, b, deviationFactor, deviationValue);
+    auto hx = new HX711(dout, sck, offset, movingAverage, times, k, b, deviationFactor, deviationValue, retries);
 
     hx->setGain(1);
     hx->read();

@@ -13,6 +13,8 @@ class HX711 {
     bool m_once;
     unsigned int m_times;
     unsigned int m_movingAverageSize;
+    unsigned int m_retires;
+    unsigned int tries;
     double m_k;
     double m_b;
     unsigned int m_fails;
@@ -24,7 +26,7 @@ class HX711 {
 public:
     HX711(const int dout, const int sck, const double offset, const unsigned int movingAverageSize,
           const unsigned int times, const double k, const double b, const int deviationFactor,
-          const int deviationValue);
+          const int deviationValue, const unsigned int retries);
     virtual ~HX711();
 
     inline int dout() { return m_dout; }
