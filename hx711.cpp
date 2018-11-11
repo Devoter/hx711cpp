@@ -161,10 +161,12 @@ void HX711::push(const int32_t value)
         if (filtered)
             ++m_tries;
 
-        if (!filtered || m_tries >= m_retries) {
+        if (!filtered) {
             m_tries = 0;
             m_movingAverage->push(rawVal);
         }
+        else if (m_tries >= m_retries)
+            m_movingAverage->push(rawVal);
     }
 
     const double result = m_movingAverage->value() * m_k + m_b;
