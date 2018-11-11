@@ -11,6 +11,7 @@ class HX711 {
     unsigned char m_gain;
     bool m_reading;
     bool m_once;
+    bool m_debug;
     unsigned int m_times;
     unsigned int m_movingAverageSize;
     unsigned int m_retries;
@@ -26,7 +27,7 @@ class HX711 {
 public:
     HX711(const int dout, const int sck, const double offset, const unsigned int movingAverageSize,
           const unsigned int times, const double k, const double b, const int deviationFactor,
-          const int deviationValue, const unsigned int retries);
+          const int deviationValue, const unsigned int retries, const bool debug);
     virtual ~HX711();
 
     inline int dout() { return m_dout; }

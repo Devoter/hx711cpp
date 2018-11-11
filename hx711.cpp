@@ -51,7 +51,7 @@ void edge()
 
 HX711::HX711(const int dout, const int sck, const double offset, const unsigned int movingAverageSize,
              const unsigned int times, const double k, const double b, const int deviationFactor,
-             const int deviationValue, const unsigned int retries)
+             const int deviationValue, const unsigned int retries, const bool debug)
 {
     m_times = times;
     m_k = k;
@@ -60,6 +60,7 @@ HX711::HX711(const int dout, const int sck, const double offset, const unsigned 
     m_deviationValue = deviationValue;
     m_tries = 0;
     m_retries = retries;
+    m_debug = debug;
     m_reading = false;
     m_once = false;
     m_fails = 0;
@@ -158,8 +159,11 @@ void HX711::push(const int32_t value)
             }
         }
 
-        if (filtered)
+        if (filtered) {
             ++m_tries;
+            if (m_debug)
+                std::cerr << doubleToString(val) << std::endl;
+        }
 
         if (!filtered) {
             m_tries = 0;
