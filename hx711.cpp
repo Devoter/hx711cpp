@@ -131,12 +131,7 @@ void HX711::reset()
 void HX711::push(const int32_t value)
 {
     if (m_movingAverage->size() < m_movingAverageSize) {
-        if (!m_kalman->initialized())
-            m_kalman->setState(value * m_k + m_b, 0.1);
-        else
-            m_kalman->correct(value * m_k + m_b);
         m_movingAverage->push(value);
-
         return;
     }
     else if (m_timed->size() < m_times) {
@@ -183,7 +178,10 @@ void HX711::push(const int32_t value)
 
     const double result = m_movingAverage->value() * m_k + m_b;
 
-    m_kalman->correct(result);
+    if (!m_kalman->initialized())
+        m_kalman->setState(result, 0.1);
+    else
+        m_kalman->correct(result);
 
     std::cout << doubleToString(m_kalman->state()) << std::endl;
 }
