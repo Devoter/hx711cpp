@@ -7,12 +7,14 @@ SimpleKalmanFilter::SimpleKalmanFilter(const double q, const double r, const dou
     m_f = f;
     m_h = h;
     m_x0 = m_p0 = m_state = m_covariance = 0;
+    m_initialized = false;
 }
 
 void SimpleKalmanFilter::setState(const double state, const double covariance)
 {
     m_state = state;
     m_covariance = covariance;
+    m_initialized = true;
 }
 
 void SimpleKalmanFilter::correct(const double data)

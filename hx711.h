@@ -3,6 +3,7 @@
 
 #include <memory>
 #include "moving_average.h"
+#include "simple_kalman_filter.h"
 
 
 class HX711 {
@@ -23,11 +24,13 @@ class HX711 {
     double m_deviationValue;
     std::shared_ptr< MovingAverage<double, double> > m_movingAverage;
     std::shared_ptr< MovingAverage<int32_t, double> > m_timed;
+    std::shared_ptr<SimpleKalmanFilter> m_kalman;
 
 public:
     HX711(const int dout, const int sck, const double offset, const unsigned int movingAverageSize,
           const unsigned int times, const double k, const double b, const int deviationFactor,
-          const int deviationValue, const unsigned int retries, const bool debug);
+          const int deviationValue, const unsigned int retries, const double kalmanQ, const double kalmanR,
+          const double kalmanF, const double kalmanH, const bool debug);
     virtual ~HX711();
 
     inline int dout() { return m_dout; }

@@ -51,7 +51,8 @@ void edge()
 
 HX711::HX711(const int dout, const int sck, const double offset, const unsigned int movingAverageSize,
              const unsigned int times, const double k, const double b, const int deviationFactor,
-             const int deviationValue, const unsigned int retries, const bool debug)
+             const int deviationValue, const unsigned int retries, const double kalmanQ, const double kalmanR,
+             const double kalmanF, const double kalmanH, const bool debug)
 {
     m_times = times;
     m_k = k;
@@ -73,6 +74,7 @@ HX711::HX711(const int dout, const int sck, const double offset, const unsigned 
     m_movingAverageSize = movingAverageSize;
     m_movingAverage = std::make_shared< MovingAverage<double, double> >(movingAverageSize);
     m_timed = std::make_shared< MovingAverage<int32_t, double> >(m_times);
+    m_kalman = std::make_shared<SimpleKalmanFilter>(kalmanQ, kalmanR, kalmanF, kalmanH);
 }
 
 HX711::~HX711()
@@ -129,7 +131,12 @@ void HX711::reset()
 void HX711::push(const int32_t value)
 {
     if (m_movingAverage->size() < m_movingAverageSize) {
+        if (!m_kalman->initialized())
+            m_kalman->setState(value * m_k + m_b, 0.1);
+        else
+            m_kalman->correct(value * m_k + m_b);
         m_movingAverage->push(value);
+
         return;
     }
     else if (m_timed->size() < m_times) {
@@ -139,6 +146,7 @@ void HX711::push(const int32_t value)
     else {
         auto rawVal = static_cast<double>(m_timed->front());
         auto val = rawVal * m_k + m_b;
+
         m_timed->push(value);
 
         auto maValue = m_movingAverage->value() * m_k + m_b;
@@ -174,7 +182,10 @@ void HX711::push(const int32_t value)
     }
 
     const double result = m_movingAverage->value() * m_k + m_b;
-    std::cout << doubleToString(result) << std::endl;
+
+    m_kalman->correct(result);
+
+    std::cout << doubleToString(m_kalman->state()) << std::endl;
 }
 
 void HX711::incFails()

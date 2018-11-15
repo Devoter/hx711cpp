@@ -43,6 +43,10 @@ int main(int argc, char *argv[])
     const int deviationFactor = atoi(argv[7]);
     const int deviationValue = atoi(argv[8]);
     const int retries = atoi(argv[9]);
+    const double kalmanQ = stringToDouble(argv[10]);
+    const double kalmanR = stringToDouble(argv[11]);
+    const double kalmanF = stringToDouble(argv[12]);
+    const double kalmanH = stringToDouble(argv[13]);
     const bool debug = static_cast<bool>(atoi(argv[10]));
 
     double k, b;
@@ -50,7 +54,8 @@ int main(int argc, char *argv[])
     k = stringToDouble(alignmentString);
     b = stringToDouble(alignmentString + 16);
 
-    auto hx = new HX711(dout, sck, offset, movingAverage, times, k, b, deviationFactor, deviationValue, retries, debug);
+    auto hx = new HX711(dout, sck, offset, movingAverage, times, k, b, deviationFactor, deviationValue, retries,
+            kalmanQ, kalmanR, kalmanF, kalmanH, debug);
 
     hx->setGain(1);
     hx->read();
