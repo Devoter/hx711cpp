@@ -28,26 +28,27 @@ void catchSigterm()
 
 int main(int argc, char *argv[])
 {
-    if (argc != 15) {
+    if (argc != 16) {
         return 1;
     }
 
     catchSigterm();
 
-    const double offset = atof(argv[1]);
-    const char *alignmentString = argv[2];
-    const int movingAverage = atoi(argv[3]);
-    const int times = atoi(argv[4]);
-    const int dout = atoi(argv[5]);
-    const int sck = atoi(argv[6]);
-    const int deviationFactor = atoi(argv[7]);
-    const int deviationValue = atoi(argv[8]);
-    const int retries = atoi(argv[9]);
-    const double kalmanQ = stringToDouble(argv[10]);
-    const double kalmanR = stringToDouble(argv[11]);
-    const double kalmanF = stringToDouble(argv[12]);
-    const double kalmanH = stringToDouble(argv[13]);
-    const bool debug = static_cast<bool>(atoi(argv[14]));
+    const bool humanMode = static_cast<bool>(atoi(argv[1]));
+    const double offset = atof(argv[2]);
+    const char *alignmentString = argv[3];
+    const int movingAverage = atoi(argv[4]);
+    const int times = atoi(argv[5]);
+    const int dout = atoi(argv[6]);
+    const int sck = atoi(argv[7]);
+    const int deviationFactor = atoi(argv[8]);
+    const int deviationValue = atoi(argv[9]);
+    const int retries = atoi(argv[10]);
+    const double kalmanQ = humanMode ? atof(argv[11]) : stringToDouble(argv[11]);
+    const double kalmanR = humanMode ? atof(argv[12]) : stringToDouble(argv[12]);
+    const double kalmanF = humanMode ? atof(argv[13]) : stringToDouble(argv[13]);
+    const double kalmanH = humanMode ? atof(argv[14]) : stringToDouble(argv[14]);
+    const bool debug = static_cast<bool>(atoi(argv[15]));
 
     double k, b;
 
