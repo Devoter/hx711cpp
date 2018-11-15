@@ -1,6 +1,6 @@
 #include "simple_kalman_filter.h"
 
-SimpleKalmanFilter::SimpleKalmanFilter(const double q, const double r, const double f, const dobule h)
+SimpleKalmanFilter::SimpleKalmanFilter(const double q, const double r, const double f, const double h)
 {
     m_q = q;
     m_r = r;

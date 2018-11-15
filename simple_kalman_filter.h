@@ -13,7 +13,7 @@ class SimpleKalmanFilter {
     bool m_initialized;
 
 public:
-    SimpleKalmanFilter(const double q, const double r, const double f = 1, const dobule h = 1);
+    SimpleKalmanFilter(const double q, const double r, const double f = 1, const double h = 1);
 
     inline double state() const { return m_state; }
     void setState(const double state, const double covariance);
