@@ -28,7 +28,7 @@ void catchSigterm()
 
 int main(int argc, char *argv[])
 {
-    if (argc != 11) {
+    if (argc != 15) {
         return 1;
     }
 
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
     const double kalmanR = stringToDouble(argv[11]);
     const double kalmanF = stringToDouble(argv[12]);
     const double kalmanH = stringToDouble(argv[13]);
-    const bool debug = static_cast<bool>(atoi(argv[10]));
+    const bool debug = static_cast<bool>(atoi(argv[14]));
 
     double k, b;
 
