@@ -49,11 +49,10 @@ void edge()
         instance->setReading(false);
 }
 
-HX711::HX711(const int dout, const int sck, const double offset, const unsigned int movingAverageSize,
-             const unsigned int times, const double k, const double b, const int deviationFactor,
-             const int deviationValue, const unsigned int retries, const bool debug)
+HX711::HX711(const int dout, const int sck, const double offset, const unsigned int movingAverageSize, const unsigned int times, const double k, const double b,
+             const bool useTAFilter, const int deviationFactor, const int deviationValue, const unsigned int retries, const bool useKalmanFilter,
+             const double kalmanQ, const double kalmanR, const double kalmanF, const double kalmanH, const bool debug, const bool humanMode)
 {
-    m_times = times;
     m_k = k;
     m_b = b + offset;
     m_deviationFactor = deviationFactor ? deviationFactor / 100.0 : 0;
@@ -63,6 +62,9 @@ HX711::HX711(const int dout, const int sck, const double offset, const unsigned 
     m_debug = debug;
     m_reading = false;
     m_once = false;
+    m_humanMode = humanMode;
+    m_useTAFilter = useTAFilter;
+    m_useKalmanFilter = useKalmanFilter;
     m_fails = 0;
     wiringPiSetupGpio();
     m_dout = dout;
@@ -70,9 +72,9 @@ HX711::HX711(const int dout, const int sck, const double offset, const unsigned 
     m_gain = 1;
     pinMode(m_dout, INPUT);
     pinMode(m_sck, OUTPUT);
-    m_movingAverageSize = movingAverageSize;
-    m_movingAverage = std::make_shared< MovingAverage<double, double> >(movingAverageSize);
-    m_timed = std::make_shared< MovingAverage<int32_t, double> >(m_times);
+    m_movingAverage = std::make_shared<MovingAverage<double, double>>(movingAverageSize);
+    m_timed = std::make_shared<MovingAverage<int32_t, double>>(times);
+    m_kalman = std::make_shared<SimpleKalmanFilter>(kalmanQ, kalmanR, kalmanF, kalmanH);
 }
 
 HX711::~HX711()
@@ -128,53 +130,54 @@ void HX711::reset()
 
 void HX711::push(const int32_t value)
 {
-    if (m_movingAverage->size() < m_movingAverageSize) {
-        m_movingAverage->push(value);
+    if (m_movingAverage->size() < m_movingAverage->maxSize()) {
+        if (m_useKalmanFilter) {
+            m_kalman->initialized() ? m_kalman->correct(value * m_k + m_b) : m_kalman->setState(value * m_k + m_b, 0.1);
+            m_movingAverage->push(m_kalman->state());
+        }
+        else
+            m_movingAverage->push(value * m_k + m_b);
         return;
     }
-    else if (m_timed->size() < m_times) {
+    else if (m_timed->size() < m_timed->maxSize()) {
         m_timed->push(value);
         return;
     }
     else {
-        auto rawVal = static_cast<double>(m_timed->front());
-        auto val = rawVal * m_k + m_b;
+        double val = m_timed->front() * m_k + m_b;
+
         m_timed->push(value);
 
-        auto maValue = m_movingAverage->value() * m_k + m_b;
-        auto maFactored = maValue * m_deviationFactor;
-
-        bool filtered = false;
-        if (val < (maValue - maFactored - m_deviationValue) || val > (maValue + maFactored + m_deviationValue)) {
-            filtered = true;
-        }
-        else {
-            auto deque = *(m_timed->deque());
-            for (auto &el : deque) {
-                auto t = static_cast<double>(el) * m_k + m_b;
-                if (val < (t - maFactored - m_deviationValue) || val > (t + maFactored + m_deviationValue)) {
-                    filtered = true;
-                    break;
-                }
-            }
-        }
+        bool filtered = !taFilter(val);
 
         if (filtered) {
             ++m_tries;
-            if (m_debug)
-                std::cerr << doubleToString(val) << std::endl;
+
+            if (m_debug) {
+                if (m_humanMode)
+                    std::cerr << "\nFiltered: " << val << std::endl;
+                else
+                    std::cerr << "Filtered: " << doubleToString(val) << std::endl;
+            }
         }
 
         if (!filtered) {
             m_tries = 0;
-            m_movingAverage->push(rawVal);
+            pushValue(val);
         }
         else if (m_tries >= m_retries)
-            m_movingAverage->push(rawVal);
+            pushValue(val);
     }
 
-    const double result = m_movingAverage->value() * m_k + m_b;
-    std::cout << doubleToString(result) << std::endl;
+    const double result = m_movingAverage->value();
+
+    if (m_humanMode) {
+        for (int i = 0; i < 80; ++i)
+            std::cout << '\b';
+        std::cout << doubleToString(result) << ' ' << result;
+    }
+    else
+        std::cout << doubleToString(result) << std::endl;
 }
 
 void HX711::incFails()
@@ -184,4 +187,37 @@ void HX711::incFails()
         reset();
         m_fails = 0;
     }
+}
+
+void HX711::pushValue(const double &value)
+{
+    if (m_useKalmanFilter) {
+        m_kalman->correct(value);
+        m_movingAverage->push(m_kalman->state());
+    }
+    else
+        m_movingAverage->push(value);
+}
+
+bool HX711::taFilter(const double &value)
+{
+    if (!m_useTAFilter)
+        return true;
+
+    double maValue = m_movingAverage->value();
+    double maFactored = maValue * m_deviationFactor;
+
+    if (value < (maValue - maFactored - m_deviationValue) || value > (maValue + maFactored + m_deviationValue))
+        return false;
+    else {
+        auto deque = *(m_timed->deque());
+
+        for (auto &el : deque) {
+            double t = static_cast<double>(el) * m_k + m_b;
+            if (value < (t - maFactored - m_deviationValue) || value > (t + maFactored + m_deviationValue))
+                return false;
+        }
+    }
+
+    return true;
 }
