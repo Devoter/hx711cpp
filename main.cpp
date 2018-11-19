@@ -28,7 +28,8 @@ void catchSigterm()
 
 int main(int argc, char *argv[])
 {
-    if (argc != 16) {
+    if (argc != 18) {
+        std::cerr << "No enough parameters" << std::endl;
         return 1;
     }
 
@@ -44,19 +45,34 @@ int main(int argc, char *argv[])
     const int deviationFactor = atoi(argv[8]);
     const int deviationValue = atoi(argv[9]);
     const int retries = atoi(argv[10]);
-    const double kalmanQ = humanMode ? atof(argv[11]) : stringToDouble(argv[11]);
-    const double kalmanR = humanMode ? atof(argv[12]) : stringToDouble(argv[12]);
-    const double kalmanF = humanMode ? atof(argv[13]) : stringToDouble(argv[13]);
-    const double kalmanH = humanMode ? atof(argv[14]) : stringToDouble(argv[14]);
-    const bool debug = static_cast<bool>(atoi(argv[15]));
+    const bool useTAFilter = static_cast<bool>(atoi(argv[11]));
+    const bool useKalmanFilter = static_cast<bool>(atoi(argv[12]));
+    const double kalmanQ = humanMode ? atof(argv[13]) : stringToDouble(argv[13]);
+    const double kalmanR = humanMode ? atof(argv[14]) : stringToDouble(argv[14]);
+    const double kalmanF = humanMode ? atof(argv[15]) : stringToDouble(argv[15]);
+    const double kalmanH = humanMode ? atof(argv[16]) : stringToDouble(argv[16]);
+    const bool debug = static_cast<bool>(atoi(argv[17]));
 
     double k, b;
 
     k = stringToDouble(alignmentString);
     b = stringToDouble(alignmentString + 16);
 
-    auto hx = new HX711(dout, sck, offset, movingAverage, times, k, b, deviationFactor, deviationValue, retries,
-            kalmanQ, kalmanR, kalmanF, kalmanH, debug);
+    if (debug) {
+        std::cerr << "dout: " << dout << ", sck: " << sck << std::endl <<
+                  "offset: " << offset << std::endl <<
+                  "k: " << k << ", b: " << b << std::endl <<
+                  "moving average: " << movingAverage << std::endl <<
+                  "TA filter:: use: " << useTAFilter << ", times: " << times <<
+                  ", deviation:: factor: " << deviationFactor << ", deviation value: " << deviationValue << ", retries: " << retries << std::endl <<
+                  "Kalman filter:: use: " << useKalmanFilter <<  ", Q: " << kalmanQ << ", R: " <<
+                  kalmanR << ", F: " << kalmanF << ", H: " << kalmanH << std::endl <<
+                  "debug: " << debug << std::endl <<
+                  "human mode: " << humanMode << std::endl;
+    }
+
+    auto hx = new HX711(dout, sck, offset, movingAverage, times, k, b, useTAFilter, deviationFactor, deviationValue, retries,
+            useKalmanFilter, kalmanQ, kalmanR, kalmanF, kalmanH, debug, humanMode);
 
     hx->setGain(1);
     hx->read();
@@ -66,7 +82,7 @@ int main(int argc, char *argv[])
 
     if (!sigTerm) {
         sleep(1);
-    
+
         hx->reset();
         hx->start();
 

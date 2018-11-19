@@ -13,8 +13,9 @@ class HX711 {
     bool m_reading;
     bool m_once;
     bool m_debug;
-    unsigned int m_times;
-    unsigned int m_movingAverageSize;
+    bool m_useTAFilter;
+    bool m_useKalmanFilter;
+    bool m_humanMode;
     unsigned int m_retries;
     unsigned int m_tries;
     double m_k;
@@ -27,10 +28,9 @@ class HX711 {
     std::shared_ptr<SimpleKalmanFilter> m_kalman;
 
 public:
-    HX711(const int dout, const int sck, const double offset, const unsigned int movingAverageSize,
-          const unsigned int times, const double k, const double b, const int deviationFactor,
-          const int deviationValue, const unsigned int retries, const double kalmanQ, const double kalmanR,
-          const double kalmanF, const double kalmanH, const bool debug);
+    HX711(const int dout, const int sck, const double offset, const unsigned int movingAverageSize, const unsigned int times, const double k, const double b,
+          const bool useTAFilter, const int deviationFactor, const int deviationValue, const unsigned int retries, const bool useKalmanFilter,
+          const double kalmanQ, const double kalmanR, const double kalmanF, const double kalmanH, const bool debug, const bool humanMode);
     virtual ~HX711();
 
     inline int dout() { return m_dout; }
@@ -52,6 +52,10 @@ public:
     void reset();
     void push(const int32_t value);
     void incFails();
+
+protected:
+    void pushValue(const double &value);
+    bool taFilter(const double &value);
 };
 
 #endif // HX711_H
