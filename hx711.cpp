@@ -292,12 +292,11 @@ void HX711::readTemperature(HX711 *instance, const char *filename)
                 if (instance->m_debug)
                     std::cerr << "Temperature value is not found" << std::endl;
             }
+            else
+                instance->m_temperature = std::atoi(line.substr(found + 2).c_str());
         }
 
-        if (!failed)
-            instance->m_temperature = std::atoi(line.substr(found + 2).c_str());
         instance->m_temperatureReadFail = failed;
-
         std::this_thread::sleep_for(std::chrono::seconds(2));
     }
 }
