@@ -80,7 +80,6 @@ HX711::HX711(const int dout, const int sck, const double offset, const unsigned 
 
     m_temperature = 0;
     m_temperatureReadFail = true;
-    m_temperatureFilename = filename;
 
     wiringPiSetupGpio();
     m_dout = dout;
@@ -92,7 +91,7 @@ HX711::HX711(const int dout, const int sck, const double offset, const unsigned 
     m_movingAverage = std::make_shared<MovingAverage<double, double>>(movingAverageSize);
     m_timed = std::make_shared<MovingAverage<int32_t, double>>(times);
     m_kalman = std::make_shared<SimpleKalmanFilter>(kalmanQ, kalmanR, kalmanF, kalmanH);
-    m_temperatureReader = std::make_shared<std::thread>(HX711::readTemperature, this);
+    m_temperatureReader = std::make_shared<std::thread>(HX711::readTemperature, this, filename);
 }
 
 HX711::~HX711()
@@ -243,7 +242,7 @@ bool HX711::taFilter(const double &value)
     return true;
 }
 
-static void HX711::readTemperature(HX711 *instance)
+static void HX711::readTemperature(HX711 *instance, const char *filename)
 {
     std::ifstream inf;
     char yes[] = "YES";

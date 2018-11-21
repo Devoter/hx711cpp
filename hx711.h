@@ -36,7 +36,6 @@ class HX711 {
 
     std::shared_mutex m_mutex;
 
-    char *m_temperatureFilename;
     volatile std::atomic_int m_temperature;
     std::atomic_bool m_temperatureReadFail;
 
