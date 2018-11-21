@@ -98,8 +98,9 @@ HX711::~HX711()
 {
     m_movingAverage.reset();
     instance = nullptr;
-    m_working = true;
-    m_temperatureReader->join();
+    m_working = false;
+    if (m_temperatureReader->joinable())
+        m_temperatureReader->join();
 }
 
 void HX711::start()
