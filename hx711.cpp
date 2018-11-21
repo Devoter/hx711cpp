@@ -252,40 +252,52 @@ void HX711::readTemperature(HX711 *instance, const char *filename)
     char tempPrefix[] = "t=";
 
     while (instance->m_working) {
+        bool failed = false;
 
         inf.open(filename);
         if (!inf.is_open()) {
-            std::lock_guard<std::mutex> lock(instance->m_mutex);
-            instance->m_temperatureReadFail = true;
-            std::cerr << "Could not open sensor device file" << std::endl;
-            continue;
+            failed = true;
+
+            std::lock_guard <std::mutex> lock(instance->m_mutex);
+            if (instance->m_debug)
+                std::cerr << "Could not open sensor device file" << std::endl;
         }
 
 
         std::string line;
-        std::getline(inf, line);
-        if (line.find(yes, 0) == std::string::npos) {
-            std::lock_guard<std::mutex> lock(instance->m_mutex);
-            instance->m_temperatureReadFail = true;
-            std::cerr << "Sensor is not ready" << std::endl;
-            inf.close();
-            continue;
+
+        if (!failed) {
+            std::getline(inf, line);
+
+            if (line.find(yes, 0) == std::string::npos) {
+                failed = true;
+
+                std::lock_guard <std::mutex> lock(instance->m_mutex);
+                if (instance->m_debug)
+                    std::cerr << "Sensor is not ready" << std::endl;
+            }
         }
 
         line.clear();
-        std::getline(inf, line);
+        if (!failed)
+            std::getline(inf, line);
         inf.close();
 
-        auto found = line.find(tempPrefix, 0);
-        if (found == std::string::npos) {
-            std::lock_guard<std::mutex> lock(instance->m_mutex);
-            instance->m_temperatureReadFail = true;
-            std::cerr << "Temperature value is not found" << std::endl;
-            continue;
+        if (!failed) {
+            auto found = line.find(tempPrefix, 0);
+            if (found == std::string::npos) {
+                failed = true;
+
+                std::lock_guard <std::mutex> lock(instance->m_mutex);
+                if (instance->m_debug)
+                    std::cerr << "Temperature value is not found" << std::endl;
+            }
         }
 
-        instance->m_temperature = std::atoi(line.substr(found + 2).c_str());
-        instance->m_temperatureReadFail = false;
+        if (!failed)
+            instance->m_temperature = std::atoi(line.substr(found + 2).c_str());
+        instance->m_temperatureReadFail = failed;
+
         std::this_thread::sleep_for(std::chrono::seconds(2));
     }
 }
