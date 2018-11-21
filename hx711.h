@@ -36,7 +36,7 @@ class HX711 {
 
     std::mutex m_mutex;
 
-    volatile std::atomic_int m_temperature;
+    std::atomic_int m_temperature;
     std::atomic_bool m_temperatureReadFail;
 
     std::shared_ptr<MovingAverage<double, double>> m_movingAverage;
