@@ -74,7 +74,7 @@ protected:
     void pushValue(const double &value);
     bool taFilter(const double &value);
     inline double align(const double &value) { return value * m_k + m_b; }
-    static void readTemperature(HX711 *instance);
+    static void readTemperature(HX711 *instance, const chat *filename);
 };
 
 #endif // HX711_H
