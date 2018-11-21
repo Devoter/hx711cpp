@@ -4,7 +4,7 @@
 #include <atomic>
 #include <memory>
 #include <thread>
-#include <shared_mutex>
+#include <mutex>
 #include "moving_average.h"
 #include "simple_kalman_filter.h"
 
@@ -34,7 +34,7 @@ class HX711 {
     double m_deviationFactor;
     double m_deviationValue;
 
-    std::shared_mutex m_mutex;
+    std::mutex m_mutex;
 
     volatile std::atomic_int m_temperature;
     std::atomic_bool m_temperatureReadFail;

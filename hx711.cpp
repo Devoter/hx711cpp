@@ -1,9 +1,7 @@
 #include <iostream>
 #include <chrono>
-#include <shared_mutex>
 #include <string>
 #include <fstream>
-#include <thread>
 #include <unistd.h>
 #include <wiringPi.h>
 #include "double_to_string.h"
@@ -96,11 +94,15 @@ HX711::HX711(const int dout, const int sck, const double offset, const unsigned 
 
 HX711::~HX711()
 {
-    m_movingAverage.reset();
-    instance = nullptr;
     m_working = false;
     if (m_temperatureReader->joinable())
-        m_temperatureReader->join();
+        m_temperatureReader->detach();
+
+    instance = nullptr;
+    m_movingAverage.reset();
+    m_timed.reset();
+    m_kalman.reset();
+    m_temperatureReader.reset();
 }
 
 void HX711::start()
@@ -174,7 +176,7 @@ void HX711::push(const int32_t value)
             ++m_tries;
 
             if (m_debug) {
-                std::lock_guard<std::shared_mutex> lock(m_mutex);
+                std::lock_guard<std::mutex> lock(m_mutex);
                 if (m_humanMode)
                     std::cerr << "\nFiltered: " << val << std::endl;
                 else
@@ -253,7 +255,7 @@ void HX711::readTemperature(HX711 *instance, const char *filename)
 
         inf.open(filename);
         if (!inf.is_open()) {
-            std::lock_guard<std::shared_mutex> lock(instance->m_mutex);
+            std::lock_guard<std::mutex> lock(instance->m_mutex);
             instance->m_temperatureReadFail = true;
             std::cerr << "Could not open sensor device file" << std::endl;
             continue;
@@ -263,7 +265,7 @@ void HX711::readTemperature(HX711 *instance, const char *filename)
         std::string line;
         std::getline(inf, line);
         if (line.find(yes, 0) == std::string::npos) {
-            std::lock_guard<std::shared_mutex> lock(instance->m_mutex);
+            std::lock_guard<std::mutex> lock(instance->m_mutex);
             instance->m_temperatureReadFail = true;
             std::cerr << "Sensor is not ready" << std::endl;
             inf.close();
@@ -276,7 +278,7 @@ void HX711::readTemperature(HX711 *instance, const char *filename)
 
         auto found = line.find(tempPrefix, 0);
         if (found == std::string::npos) {
-            std::lock_guard<std::shared_mutex> lock(instance->m_mutex);
+            std::lock_guard<std::mutex> lock(instance->m_mutex);
             instance->m_temperatureReadFail = true;
             std::cerr << "Temperature value is not found" << std::endl;
             continue;
