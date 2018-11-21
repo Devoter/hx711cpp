@@ -242,7 +242,7 @@ bool HX711::taFilter(const double &value)
     return true;
 }
 
-static void HX711::readTemperature(HX711 *instance, const char *filename)
+void HX711::readTemperature(HX711 *instance, const char *filename)
 {
     std::ifstream inf;
     char yes[] = "YES";
