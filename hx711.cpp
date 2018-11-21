@@ -197,7 +197,7 @@ void HX711::push(const int32_t value)
     if (m_humanMode) {
         for (int i = 0; i < 80; ++i)
             std::cout << '\b';
-        std::cout << doubleToString(result) << ' ' << m_temperature << ' ' << result;
+        std::cout << doubleToString(result) << ' ' << m_temperature << ' ' << m_temperatureReadFail << ' ' << result;
     }
     else
         std::cout << doubleToString(result) << std::endl;
