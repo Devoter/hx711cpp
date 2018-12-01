@@ -28,7 +28,7 @@ void catchSigterm()
 
 int main(int argc, char *argv[])
 {
-    if (argc != 18) {
+    if (argc != 21) {
         std::cerr << "No enough parameters" << std::endl;
         return 1;
     }
@@ -51,12 +51,11 @@ int main(int argc, char *argv[])
     const double kalmanR = humanMode ? atof(argv[14]) : stringToDouble(argv[14]);
     const double kalmanF = humanMode ? atof(argv[15]) : stringToDouble(argv[15]);
     const double kalmanH = humanMode ? atof(argv[16]) : stringToDouble(argv[16]);
-    const bool debug = static_cast<bool>(atoi(argv[17]));
-
-    double k, b;
-
-    k = stringToDouble(alignmentString);
-    b = stringToDouble(alignmentString + 16);
+    const char *temperatureFilename = argv[17];
+    const double temperatureFactor = humanMode ? atof(argv[18]) : stringToDouble(argv[18]);
+    const int baseTemperature = atoi(argv[19]);
+    const bool debug = static_cast<bool>(atoi(argv[20]));
+    const double k = stringToDouble(alignmentString), b = stringToDouble(alignmentString + 16);
 
     if (debug) {
         std::cerr << "dout: " << dout << ", sck: " << sck << std::endl <<
@@ -68,11 +67,13 @@ int main(int argc, char *argv[])
                   "Kalman filter:: use: " << useKalmanFilter <<  ", Q: " << kalmanQ << ", R: " <<
                   kalmanR << ", F: " << kalmanF << ", H: " << kalmanH << std::endl <<
                   "debug: " << debug << std::endl <<
-                  "human mode: " << humanMode << std::endl;
+                  "human mode: " << humanMode << std::endl <<
+                  "temperature filename: " << temperatureFilename << std::endl <<
+                  "temperature factor: " << temperatureFactor << ", base: " << baseTemperature << std::endl;
     }
 
     auto hx = new HX711(dout, sck, offset, movingAverage, times, k, b, useTAFilter, deviationFactor, deviationValue, retries,
-            useKalmanFilter, kalmanQ, kalmanR, kalmanF, kalmanH, debug, humanMode);
+            useKalmanFilter, kalmanQ, kalmanR, kalmanF, kalmanH, debug, humanMode, temperatureFilename, temperatureFactor, baseTemperature);
 
     hx->setGain(1);
     hx->read();

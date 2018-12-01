@@ -1,6 +1,6 @@
 CC=g++
 override CFLAGS += -std=c++17 -c -Wall
-LDFLAGS += -lwiringPi
+LDFLAGS += -lwiringPi -lpthread
 SOURCES=simple_kalman_filter.cpp string_to_double.cpp double_to_string.cpp hx711.cpp main.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 	EXECUTABLE=hx711
