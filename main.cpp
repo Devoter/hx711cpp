@@ -30,13 +30,13 @@ void catchSigterm()
     sigaction(SIGINT, &sigact, NULL);
 }
 
-std::string &help()
+std::string help()
 {
     const char b[] = "\033[1;36m"; // bold cyan
     const char wb[] = "\033[1;37m"; // while bold
     const char c[] = "\033[0m"; // clear format
-    const char u[] = "\033[4;32"; // green underline
-    const char cu[] = "\033[0m \033[4;32"; // clear + space + green underline
+    const char u[] = "\033[4;32m"; // green underline
+    const char cu[] = "\033[0m \033[4;32m"; // clear + space + green underline
     const char tb[] = "\t\033[1;36m"; // tab + bold cyan
 
     return std::string("\n\nhx711 <human_mode> <offset> <alignment_string> <moving_average> <times> <dout> <sck> <deviation_factor> <deviation_value> "
