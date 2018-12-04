@@ -29,6 +29,7 @@ void catchSigterm()
 int main(int argc, char *argv[])
 {
     if (argc != 21) {
+        std::cerr << "No enough parameters" << std::endl;
         return 1;
     }
 
