@@ -11,7 +11,9 @@ configure_file (
 
 include_directories("${PROJECT_BINARY_DIR}")
 
-set(CMAKE_CXX_STANDARD 17)
+#set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+
 set (warnings "-Wall -Wextra -Werror")
 add_executable(${PROJECT_NAME} simple_kalman_filter.cpp string_to_double.cpp double_to_string.cpp hx711.cpp main.cpp)
 
