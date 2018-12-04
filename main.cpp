@@ -39,15 +39,16 @@ std::string help()
     const char cu[] = "\033[0m \033[4;32m"; // clear + space + green underline
     const char tb[] = "\t\033[1;36m"; // tab + bold cyan
 
-    return std::string("\n\nhx711 <human_mode> <offset> <alignment_string> <moving_average> <times> <dout> <sck> <deviation_factor> <deviation_value> "
-                       "<retries> <use_ta_filter> <use_kalman_filter> <kalman_q> <kalman_r> <kalman_f> <kalman_h> <temperature_filename> <temperature_factor> "
-                       "<base_temperature> <debug>\n\n") +
-           tb + "int" + cu + "human mode" + c + " - " + wb + '0' + c + " - Normal mode, " + wb + '1' + c +
-           " - Human mode (input and output all values as decimal except alignment string)\n" +
+    return std::string("\n\nhx711 <human_mode> <offset> <alignment_string> <moving_average> <times>\n"
+                       "<dout> <sck> <deviation_factor> <deviation_value> <retries> <use_ta_filter>\n"
+                       "<use_kalman_filter> <kalman_q> <kalman_r> <kalman_f> <kalman_h>\n"
+                       "<temperature_filename> <temperature_factor> <base_temperature> <debug>\n\n") +
+           tb + "int" + cu + "human mode" + c + " - " + wb + '0' + c + " - Normal mode, " + wb + '1' + c + " - Human mode\n" +
+           "\t\t(input and output all values as decimal except alignment string)\n" +
            tb + "double" + cu + "offset" + c + " - result offset, appends to a result value\n" +
            tb + "char*" + cu + "alignment string" + c + " - ascii-coded 16 bytes of " + b + "double" + ' ' + wb + 'k' + c + " and " +
            wb + 'b' + c + " factors from " + wb + "y = k * x + b" + c + '\n' +
-           tb + "unsigned int" + cu + "times" + c + " - count of consecutive measurements, which are used to reduce the value volatility\n" +
+           tb + "unsigned int" + cu + "times" + c + " - count of consecutive measurements,\n\t\twhich are used to reduce the value volatility\n" +
            tb + "unsigned int" + cu + "dout" + c + " - _data out_ pin number (BCM)\n" +
            tb + "unsigned int" + cu + "sck" + c + " - _serial clock_ pin number (BCM)\n" +
            tb + "int" + cu + "deviation factor" + c + " - tolerance percentage\n" +
@@ -61,7 +62,7 @@ std::string help()
            tb + "double" + c + " (Human mode) " + b + "string" + cu + "Kalman H" + c + " - the observation model (set to " + wb + '1' + c + ")\n" +
            tb + "string" + cu + "temperature filename" + c + " - a name of file contains temperature value\n" +
            tb + "double" + c + " (Human mode) " + b + "string" + cu + "temperature factor" + c + " - temperature compensation factor\n" +
-           tb + "int" + cu + "base temperature" + c + " - reference temperature value (in thousandths of degrees Celsius)\n" +
+           tb + "int" + cu + "base temperature" + c + " - reference temperature value\n\t\t(in thousandths of degrees Celsius)\n" +
            tb + "int" + cu + "debug" + c + " - " + wb + '0' + c + " - disable debug, " + wb + '1' + c + " - enable (debug messages outputs to stderr)\n";
 }
 
