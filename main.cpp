@@ -57,8 +57,8 @@ std::string &help()
            tb + "int" + cu + "use Kalman filter" + c + " - " + wb + '0' + c + " - disable Kalman filter, " + wb + '1' + c + " - enable\n" +
            tb + "double" + c + " (Human mode) " + b + "string" + cu + "Kalman Q" + c + " - the covariance of the process noise\n" +
            tb + "double" + c + " (Human mode) " + b + "string" + cu + "Kalman R" + c + " - the covariance of the observation noise\n" +
-           tb + "double" + c + " (Human mode) " + b + "string" + cu + "Kalman F" + c + " - the state-transition model (set to " + wb + '1' + cl + ")\n" +
-           tb + "double" + c + " (Human mode) " + b + "string" + cu + "Kalman H" + c + " - the observation model (set to " + wb + '1' + cl + ")\n" +
+           tb + "double" + c + " (Human mode) " + b + "string" + cu + "Kalman F" + c + " - the state-transition model (set to " + wb + '1' + c + ")\n" +
+           tb + "double" + c + " (Human mode) " + b + "string" + cu + "Kalman H" + c + " - the observation model (set to " + wb + '1' + c + ")\n" +
            tb + "string" + cu + "temperature filename" + c + " - a name of file contains temperature value\n" +
            tb + "double" + c + " (Human mode) " + b + "string" + cu + "temperature factor" + c + " - temperature compensation factor\n" +
            tb + "int" + cu + "base temperature" + c + " - reference temperature value (in thousandths of degrees Celsius)\n" +
