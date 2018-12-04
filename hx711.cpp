@@ -156,11 +156,11 @@ void HX711::push(const int32_t value)
 {
     if (m_movingAverage->size() < m_movingAverage->maxSize()) {
         if (m_useKalmanFilter) {
-            m_kalman->initialized() ? m_kalman->correct(align(value)) : m_kalman->setState(align(value), 0.1);
+            m_kalman->initialized() ? m_kalman->correct(value) : m_kalman->setState(value, 0.1);
             m_movingAverage->push(m_kalman->state());
         }
         else
-            m_movingAverage->push(align(value));
+            m_movingAverage->push(value);
         return;
     }
     else if (m_timed->size() < m_timed->maxSize()) {
@@ -168,7 +168,8 @@ void HX711::push(const int32_t value)
         return;
     }
     else {
-        double val = align(m_timed->front());
+        double rawValue = m_timed->front();
+        double val = align(rawValue);
 
         m_timed->push(value);
 
@@ -188,13 +189,13 @@ void HX711::push(const int32_t value)
 
         if (!filtered) {
             m_tries = 0;
-            pushValue(val);
+            pushValue(rawValue);
         }
         else if (m_tries >= m_retries)
-            pushValue(val);
+            pushValue(rawValue);
     }
 
-    const double result = m_movingAverage->value();
+    const double result = align(m_movingAverage->value());
 
     if (m_humanMode) {
         for (int i = 0; i < 80; ++i)
@@ -229,7 +230,7 @@ bool HX711::taFilter(const double &value)
     if (!m_useTAFilter)
         return true;
 
-    double maValue = m_movingAverage->value();
+    double maValue = align(m_movingAverage->value());
     double maFactored = maValue * m_deviationFactor;
 
     if (value < (maValue - maFactored - m_deviationValue) || value > (maValue + maFactored + m_deviationValue))
@@ -238,7 +239,7 @@ bool HX711::taFilter(const double &value)
         auto deque = *(m_timed->deque());
 
         for (auto &el : deque) {
-            double t = static_cast<double>(el) * m_k + m_b;
+            double t = align(el);
             if (value < (t - maFactored - m_deviationValue) || value > (t + maFactored + m_deviationValue))
                 return false;
         }
