@@ -1,10 +1,13 @@
 #include <iostream>
 #include <cstdlib>
+#include <sstream>
 #include <cstring>
 #include <unistd.h>
 #include <signal.h>
 #include "hx711.h"
 #include "string_to_double.h"
+#include "config.h"
+
 
 bool sigTerm = false;
 
@@ -28,6 +31,12 @@ void catchSigterm()
 
 int main(int argc, char *argv[])
 {
+    std::stringstream welcome;
+
+    welcome << "HX711 driver, version " << applicationVersion << "\n\tCopyright 2018 Tulpa Automatics";
+
+    std::cerr << welcome << std::endl;
+
     if (argc != 21) {
         std::cerr << "No enough parameters" << std::endl;
         return 1;
@@ -58,18 +67,22 @@ int main(int argc, char *argv[])
     const double k = stringToDouble(alignmentString), b = stringToDouble(alignmentString + 16);
 
     if (debug) {
-        std::cerr << "dout: " << dout << ", sck: " << sck << std::endl <<
-                  "offset: " << offset << std::endl <<
-                  "k: " << k << ", b: " << b << std::endl <<
-                  "moving average: " << movingAverage << std::endl <<
+        std::stringstream debugInfo;
+
+        debugInfo << "dout: " << dout << ", sck: " << sck << '\n' <<
+                  "offset: " << offset << '\n' <<
+                  "k: " << k << ", b: " << b << '\n' <<
+                  "moving average: " << movingAverage << '\n' <<
                   "TA filter:: use: " << useTAFilter << ", times: " << times <<
-                  ", deviation:: factor: " << deviationFactor << ", deviation value: " << deviationValue << ", retries: " << retries << std::endl <<
+                  ", deviation:: factor: " << deviationFactor << ", deviation value: " << deviationValue << ", retries: " << retries << '\n' <<
                   "Kalman filter:: use: " << useKalmanFilter <<  ", Q: " << kalmanQ << ", R: " <<
-                  kalmanR << ", F: " << kalmanF << ", H: " << kalmanH << std::endl <<
-                  "debug: " << debug << std::endl <<
-                  "human mode: " << humanMode << std::endl <<
-                  "temperature filename: " << temperatureFilename << std::endl <<
-                  "temperature factor: " << temperatureFactor << ", base: " << baseTemperature << std::endl;
+                  kalmanR << ", F: " << kalmanF << ", H: " << kalmanH << '\n' <<
+                  "debug: " << debug << '\n' <<
+                  "human mode: " << humanMode << '\n' <<
+                  "temperature filename: " << temperatureFilename << '\n' <<
+                  "temperature factor: " << temperatureFactor << ", base: " << baseTemperature;
+
+        std::cerr << debugInfo << std::endl;
     }
 
     auto hx = new HX711(dout, sck, offset, movingAverage, times, k, b, useTAFilter, deviationFactor, deviationValue, retries,

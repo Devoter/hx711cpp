@@ -1,5 +1,15 @@
 cmake_minimum_required(VERSION 3.7)
 project(hx711)
+set(hx711_VERSION_MAJOR 2)
+set(hx711_VERSION_MINOR 0)
+set(hx711_VERSION_PATCH 2)
+
+configure_file (
+        "${PROJECT_SOURCE_DIR}/config.h.in"
+        "${PROJECT_BINARY_DIR}/config.h"
+)
+
+include_directories("${PROJECT_BINARY_DIR}")
 
 set(CMAKE_CXX_STANDARD 17)
 set (warnings "-Wall -Wextra -Werror")
