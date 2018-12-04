@@ -28,27 +28,23 @@ void catchSigterm()
 
 int main(int argc, char *argv[])
 {
-    if (argc != 11) {
+    if (argc != 21) {
         return 1;
     }
 
     catchSigterm();
 
-    const double offset = atof(argv[1]);
-    const char *alignmentString = argv[2];
-    const int movingAverage = atoi(argv[3]);
-    const int times = atoi(argv[4]);
-    const int dout = atoi(argv[5]);
-    const int sck = atoi(argv[6]);
-    const int deviationFactor = atoi(argv[7]);
-    const int deviationValue = atoi(argv[8]);
-    const int retries = atoi(argv[9]);
-    const bool debug = static_cast<bool>(atoi(argv[10]));
-
-    double k, b;
-
-    k = stringToDouble(alignmentString);
-    b = stringToDouble(alignmentString + 16);
+    const double offset = atof(argv[2]);
+    const char *alignmentString = argv[3];
+    const int movingAverage = atoi(argv[4]);
+    const int times = atoi(argv[5]);
+    const int dout = atoi(argv[6]);
+    const int sck = atoi(argv[7]);
+    const int deviationFactor = atoi(argv[8]);
+    const int deviationValue = atoi(argv[9]);
+    const int retries = atoi(argv[10]);
+    const bool debug = static_cast<bool>(atoi(argv[20]));
+    const double k = stringToDouble(alignmentString), b = stringToDouble(alignmentString + 16);
 
     auto hx = new HX711(dout, sck, offset, movingAverage, times, k, b, deviationFactor, deviationValue, retries, debug);
 
@@ -60,7 +56,7 @@ int main(int argc, char *argv[])
 
     if (!sigTerm) {
         sleep(1);
-    
+
         hx->reset();
         hx->start();
 
