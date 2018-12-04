@@ -33,37 +33,38 @@ void catchSigterm()
 std::string help()
 {
     const char b[] = "\033[1;36m"; // bold cyan
-    const char wb[] = "\033[1;37m"; // while bold
+    const char w[] = "\033[37m"; // while bold
     const char c[] = "\033[0m"; // clear format
     const char u[] = "\033[4;32m"; // green underline
     const char cu[] = "\033[0m \033[4;32m"; // clear + space + green underline
     const char tb[] = "\t\033[1;36m"; // tab + bold cyan
 
-    return std::string("\n\nhx711 <human_mode> <offset> <alignment_string> <moving_average> <times>\n"
-                       "<dout> <sck> <deviation_factor> <deviation_value> <retries> <use_ta_filter>\n"
-                       "<use_kalman_filter> <kalman_q> <kalman_r> <kalman_f> <kalman_h>\n"
-                       "<temperature_filename> <temperature_factor> <base_temperature> <debug>\n\n") +
-           tb + "int" + cu + "human mode" + c + " - " + wb + '0' + c + " - Normal mode, " + wb + '1' + c + " - Human mode\n" +
+    return std::string("\n\nhx711 <human_mode> <offset> <alignment_string> <moving_average> <times> <dout>\n"
+                       "\t<sck> <deviation_factor> <deviation_value> <retries> <use_ta_filter>\n"
+                       "\t<use_kalman_filter> <kalman_q> <kalman_r> <kalman_f> <kalman_h>\n"
+                       "\t<temperature_filename> <temperature_factor> <base_temperature> <debug>\n\n") +
+           tb + "int" + cu + "human mode" + c + " - " + w + '0' + c + " - Normal mode, " + w + '1' + c + " - Human mode\n" +
            "\t\t(input and output all values as decimal except alignment string)\n" +
            tb + "double" + cu + "offset" + c + " - result offset, appends to a result value\n" +
-           tb + "char*" + cu + "alignment string" + c + " - ascii-coded 16 bytes of " + b + "double" + ' ' + wb + 'k' + c + " and " +
-           wb + 'b' + c + " factors from " + wb + "y = k * x + b" + c + '\n' +
-           tb + "unsigned int" + cu + "times" + c + " - count of consecutive measurements,\n\t\twhich are used to reduce the value volatility\n" +
+           tb + "char*" + cu + "alignment string" + c + " - ascii-coded 16 bytes of " + b + "double" + ' ' + w + 'k' + c + " and " +
+           w + 'b' + c + '\n' + "\t\tfactors from " + w + "y = k * x + b" + c + '\n' +
+           tb + "unsigned int" + cu + "times" + c + " - count of consecutive measurements, which are\n\t\tused to reduce the value volatility\n" +
            tb + "unsigned int" + cu + "dout" + c + " - _data out_ pin number (BCM)\n" +
            tb + "unsigned int" + cu + "sck" + c + " - _serial clock_ pin number (BCM)\n" +
            tb + "int" + cu + "deviation factor" + c + " - tolerance percentage\n" +
            tb + "int" + cu + "deviation value" + c + " - tolerance\n" +
            tb + "unsigned int" + cu + "retries" + c + " - count of retries before agree invalid values\n" +
-           tb + "int" + cu + "use TA filter" + c + " - " + wb + '0' + c + "- disable Tulpa Automatics filter, " + wb + '1' + c + " - enable\n" +
-           tb + "int" + cu + "use Kalman filter" + c + " - " + wb + '0' + c + " - disable Kalman filter, " + wb + '1' + c + " - enable\n" +
-           tb + "double" + c + " (Human mode) " + b + "string" + cu + "Kalman Q" + c + " - the covariance of the process noise\n" +
-           tb + "double" + c + " (Human mode) " + b + "string" + cu + "Kalman R" + c + " - the covariance of the observation noise\n" +
-           tb + "double" + c + " (Human mode) " + b + "string" + cu + "Kalman F" + c + " - the state-transition model (set to " + wb + '1' + c + ")\n" +
-           tb + "double" + c + " (Human mode) " + b + "string" + cu + "Kalman H" + c + " - the observation model (set to " + wb + '1' + c + ")\n" +
+           tb + "int" + cu + "use TA filter" + c + " - " + w + '0' + c + " - disable Tulpa Automatics filter, " + w + '1' + c + " - enable\n" +
+           tb + "int" + cu + "use Kalman filter" + c + " - " + w + '0' + c + " - disable Kalman filter, " + w + '1' + c + " - enable\n" +
+           tb + "double" + c + " (Human mode) " + b + "string" + cu + "Kalman Q" + c + " - the covariance of the process\n\t\tnoise\n" +
+           tb + "double" + c + " (Human mode) " + b + "string" + cu + "Kalman R" + c + " - the covariance of the observation\n\t\tnoise\n" +
+           tb + "double" + c + " (Human mode) " + b + "string" + cu + "Kalman F" + c + " - the state-transition model (set to\n\t\t" + w + '1' + c + ")\n" +
+           tb + "double" + c + " (Human mode) " + b + "string" + cu + "Kalman H" + c + " - the observation model (set to " + w + '1' + c + ")\n" +
            tb + "string" + cu + "temperature filename" + c + " - a name of file contains temperature value\n" +
-           tb + "double" + c + " (Human mode) " + b + "string" + cu + "temperature factor" + c + " - temperature compensation factor\n" +
-           tb + "int" + cu + "base temperature" + c + " - reference temperature value\n\t\t(in thousandths of degrees Celsius)\n" +
-           tb + "int" + cu + "debug" + c + " - " + wb + '0' + c + " - disable debug, " + wb + '1' + c + " - enable (debug messages outputs to stderr)\n";
+           tb + "double" + c + " (Human mode) " + b + "string" + cu + "temperature factor" + c + " - temperature compensation\n\t\tfactor\n" +
+           tb + "int" + cu + "base temperature" + c + " - reference temperature value (in thousandths of\n\t\tdegrees Celsius)\n" +
+           tb + "int" + cu + "debug" + c + " - " + w + '0' + c + " - disable debug, " + w + '1' + c + " - enable (debug messages outputs to\n\t\tstderr)\n";
+
 }
 
 int main(int argc, char *argv[])
