@@ -183,7 +183,7 @@ void HX711::push(const int32_t value)
                 if (m_humanMode)
                     std::cerr << "\nFiltered: " << val << std::endl;
                 else
-                    std::cerr << "Filtered: " << doubleToString(val) << std::endl;
+                    std::cerr << << val << std::endl;
             }
         }
 
