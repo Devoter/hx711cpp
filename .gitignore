@@ -3,6 +3,7 @@
 
 # build files
 *.o
+config.h
 hx711
 
 # cmake/make files

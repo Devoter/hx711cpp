@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 
     welcome << "HX711 driver, version " << applicationVersion << "\n\tCopyright 2018 Tulpa Automatics";
 
-    std::cerr << welcome << std::endl;
+    std::cerr << welcome.str() << std::endl;
 
     if (argc != 21) {
         std::cerr << "No enough parameters" << std::endl;
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
                   "temperature filename: " << temperatureFilename << '\n' <<
                   "temperature factor: " << temperatureFactor << ", base: " << baseTemperature;
 
-        std::cerr << debugInfo << std::endl;
+        std::cerr << debugInfo.str() << std::endl;
     }
 
     auto hx = new HX711(dout, sck, offset, movingAverage, times, k, b, useTAFilter, deviationFactor, deviationValue, retries,
