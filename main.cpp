@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <sstream>
+#include <string>
 #include <cstring>
 #include <unistd.h>
 #include <signal.h>
@@ -29,6 +30,41 @@ void catchSigterm()
     sigaction(SIGINT, &sigact, NULL);
 }
 
+std::string &help()
+{
+    const char b[] = "\033[1;36m"; // bold cyan
+    const char wb[] = "\033[1;37m"; // while bold
+    const char c[] = "\033[0m"; // clear format
+    const char u[] = "\033[4;32"; // green underline
+    const char cu[] = "\033[0m \033[4;32"; // clear + space + green underline
+    const char tb[] = "\t\033[1;36m"; // tab + bold cyan
+
+    return std::string("\n\nhx711 <human_mode> <offset> <alignment_string> <moving_average> <times> <dout> <sck> <deviation_factor> <deviation_value> "
+                       "<retries> <use_ta_filter> <use_kalman_filter> <kalman_q> <kalman_r> <kalman_f> <kalman_h> <temperature_filename> <temperature_factor> "
+                       "<base_temperature> <debug>\n\n") +
+           tb + "int" + cu + "human mode" + c + " - " + wb + '0' + c + " - Normal mode, " + wb + '1' + c +
+           " - Human mode (input and output all values as decimal except alignment string)\n" +
+           tb + "double" + cu + "offset" + c + " - result offset, appends to a result value\n" +
+           tb + "char *" + cu + "alignment string" + c + " - ascii-coded 16 bytes of " + b + "double" + ' ' + wb + 'k' + c + "and" +
+           wb + 'b' + c + " factors from " + wb + "y = k * x + b" + c + '\n' +
+           tb + "unsigned int" + cu + "times" + c + " - count of consecutive measurements, which are used to reduce the value volatility\n" +
+           tb + "unsigned int" + cu + "dout" + c + " - _data out_ pin number (BCM)\n" +
+           tb + "unsigned int" + cu + "sck" + c + " - _serial clock_ pin number (BCM)\n" +
+           tb + "int" + cu + "deviation factor" + c + " - tolerance percentage\n" +
+           tb + "int" + cu + "deviation value" + c + " - tolerance\n" +
+           tb + "unsigned int" + cu + "retries" + c + " - count of retries before agree invalid values\n" +
+           tb + "int" + cu + "use TA filter" + c + " - " + wb + '0' + c + "- disable Tulpa Automatics filter, " + wb + '1' + c + " - enable\n" +
+           tb + "int" + cu + "use Kalman filter" + c + " - " + wb + '0' + c + " - disable Kalman filter, " + wb + '1' + c + " - enable\n" +
+           tb + "double" + c + " (Human mode) " + b + "string" + cu + "Kalman Q" + c + " - the covariance of the process noise\n" +
+           tb + "double" + c + " (Human mode) " + b + "string" + cu + "Kalman R" + c + " - the covariance of the observation noise\n" +
+           tb + "double" + c + " (Human mode) " + b + "string" + cu + "Kalman F" + c + " - the state-transition model (set to " + wb + '1' + cl + ")\n" +
+           tb + "double" + c + " (Human mode) " + b + "string" + cu + "Kalman H" + c + " - the observation model (set to " + wb + '1' + cl + ")\n" +
+           tb + "string" + cu + "temperature filename" + c + " - a name of file contains temperature value\n" +
+           tb + "double" + c + " (Human mode) " + b + "string" + cu + "temperature factor" + c + " - temperature compensation factor\n" +
+           tb + "int" + cu + "base temperature" + c + " - reference temperature value (in thousandths of degrees Celsius)\n" +
+           tb + "int" + cu + "debug" + c + " - " + wb + '0' + c + " - disable debug, " + wb + '1' + c + " - enable (debug messages outputs to stderr)\n";
+}
+
 int main(int argc, char *argv[])
 {
     std::stringstream welcome;
@@ -38,7 +74,7 @@ int main(int argc, char *argv[])
     std::cerr << welcome.str() << std::endl;
 
     if (argc != 21) {
-        std::cerr << "No enough parameters" << std::endl;
+        std::cerr << "No enough parameters" << help() << std::endl;
         return 1;
     }
 
@@ -75,7 +111,7 @@ int main(int argc, char *argv[])
                   "moving average: " << movingAverage << '\n' <<
                   "TA filter:: use: " << useTAFilter << ", times: " << times <<
                   ", deviation:: factor: " << deviationFactor << ", deviation value: " << deviationValue << ", retries: " << retries << '\n' <<
-                  "Kalman filter:: use: " << useKalmanFilter <<  ", Q: " << kalmanQ << ", R: " <<
+                  "Kalman filter:: use: " << useKalmanFilter << ", Q: " << kalmanQ << ", R: " <<
                   kalmanR << ", F: " << kalmanF << ", H: " << kalmanH << '\n' <<
                   "debug: " << debug << '\n' <<
                   "human mode: " << humanMode << '\n' <<
@@ -86,7 +122,7 @@ int main(int argc, char *argv[])
     }
 
     auto hx = new HX711(dout, sck, offset, movingAverage, times, k, b, useTAFilter, deviationFactor, deviationValue, retries,
-            useKalmanFilter, kalmanQ, kalmanR, kalmanF, kalmanH, debug, humanMode, temperatureFilename, temperatureFactor, baseTemperature);
+                        useKalmanFilter, kalmanQ, kalmanR, kalmanF, kalmanH, debug, humanMode, temperatureFilename, temperatureFactor, baseTemperature);
 
     hx->setGain(1);
     hx->read();
