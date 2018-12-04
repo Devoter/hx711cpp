@@ -1,6 +1,6 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-const char[] applicationVersion = "@hx711_VERSION_MAJOR@.@hx711_VERSION_MINOR@.@hx711_VERSION_PATCH@";
+const char applicationVersion[] = "@hx711_VERSION_MAJOR@.@hx711_VERSION_MINOR@.@hx711_VERSION_PATCH@";
 
 #endif // CONFIG_H
