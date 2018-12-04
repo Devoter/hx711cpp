@@ -45,7 +45,7 @@ std::string help()
            tb + "int" + cu + "human mode" + c + " - " + wb + '0' + c + " - Normal mode, " + wb + '1' + c +
            " - Human mode (input and output all values as decimal except alignment string)\n" +
            tb + "double" + cu + "offset" + c + " - result offset, appends to a result value\n" +
-           tb + "char *" + cu + "alignment string" + c + " - ascii-coded 16 bytes of " + b + "double" + ' ' + wb + 'k' + c + "and" +
+           tb + "char*" + cu + "alignment string" + c + " - ascii-coded 16 bytes of " + b + "double" + ' ' + wb + 'k' + c + " and " +
            wb + 'b' + c + " factors from " + wb + "y = k * x + b" + c + '\n' +
            tb + "unsigned int" + cu + "times" + c + " - count of consecutive measurements, which are used to reduce the value volatility\n" +
            tb + "unsigned int" + cu + "dout" + c + " - _data out_ pin number (BCM)\n" +
