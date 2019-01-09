@@ -1,5 +1,6 @@
 #include <iostream>
 #include <chrono>
+#include <cstring>
 #include <string>
 #include <fstream>
 #include <unistd.h>
@@ -253,6 +254,8 @@ void HX711::readTemperature(HX711 *instance, const char *filename)
     std::ifstream inf;
     char yes[] = "YES";
     char tempPrefix[] = "t=";
+
+    if (!strcmp("/dev/null", filename)) return;
 
     while (instance->m_working) {
         bool failed = false;
