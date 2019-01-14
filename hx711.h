@@ -1,6 +1,7 @@
 #ifndef HX711_H
 #define HX711_H
 
+#include <cmath>
 #include <atomic>
 #include <memory>
 #include <thread>
@@ -76,7 +77,11 @@ public:
 protected:
     void pushValue(const double &value);
     bool taFilter(const double &value);
-    inline double align(const double &value) { return value * m_k + m_b + (m_temperature - m_baseTemperature) * m_temperatureFactor; }
+    inline double align(const double &value) { return (value + (m_temperature - m_baseTemperature) * m_temperatureFactor) * m_k + m_b; }
+    inline int align(const double &value, const bool integer)
+    {
+        return std::round((value + (m_temperature - m_baseTemperature) * m_temperatureFactor) * m_k + m_b);
+    }
     static void readTemperature(HX711 *instance, const char *filename);
 };
 
