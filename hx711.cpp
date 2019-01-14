@@ -1,11 +1,11 @@
 #include <iostream>
 #include <chrono>
 #include <cstring>
+#include <cmath>
 #include <string>
 #include <fstream>
 #include <unistd.h>
 #include <wiringPi.h>
-#include "double_to_string.h"
 #include "hx711.h"
 
 const unsigned int maxFails = 20;
@@ -196,15 +196,15 @@ void HX711::push(const int32_t value)
             pushValue(rawValue);
     }
 
-    const double result = align(m_movingAverage->value());
+    const int result = align(m_movingAverage->value(), true);
 
     if (m_humanMode) {
         for (int i = 0; i < 80; ++i)
             std::cout << '\b';
-        std::cout << doubleToString(result) << ' ' << m_temperature << ' ' << m_temperatureReadFail << ' ' << result;
+        std::cout << result << ' ' << m_temperature << ' ' << m_temperatureReadFail << ' ' << result;
     }
     else
-        std::cout << doubleToString(result) << std::endl;
+        std::cout << result << std::endl;
 }
 
 void HX711::incFails()
