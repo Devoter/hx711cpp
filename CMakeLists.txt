@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.7)
 project(hx711)
 set(hx711_VERSION_MAJOR 2)
 set(hx711_VERSION_MINOR 1)
-set(hx711_VERSION_PATCH 0)
+set(hx711_VERSION_PATCH 1)
 
 configure_file (
         "${PROJECT_SOURCE_DIR}/config.h.in"
