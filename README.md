@@ -28,7 +28,7 @@ Format:
 ```
 
 * **int** _human mode_ - 0 - Normal mode, 1 - Human mode (input and output all values as decimal except alignment string)
-* **double** _offset_ - result offset, appends to a result value
+* **int** _offset_ - result offset, appends to a result value
 * **char** <strong>*</strong> _alignment_string_ - ascii-coded 16 bytes of `double` `k` and `b` factors from `y = k * x + b`
 * **unsigned int** _times_ - count of consecutive measurements, which are used to reduce the value volatility
 * **unsigned int** _dout_ - _data out_ pin number (BCM)

@@ -45,7 +45,7 @@ std::string help()
                        "\t<temperature_filename> <temperature_factor> <base_temperature> <debug>\n\n") +
            tb + "int" + cu + "human mode" + c + " - " + w + '0' + c + " - Normal mode, " + w + '1' + c + " - Human mode\n" +
            "\t\t(input and output all values as decimal except alignment string)\n" +
-           tb + "double" + cu + "offset" + c + " - result offset, appends to a result value\n" +
+           tb + "int" + cu + "offset" + c + " - result offset, appends to a result value\n" +
            tb + "char*" + cu + "alignment string" + c + " - ascii-coded 16 bytes of " + b + "double" + ' ' + w + 'k' + c + " and " +
            w + 'b' + c + '\n' + "\t\tfactors from " + w + "y = k * x + b" + c + '\n' +
            tb + "unsigned int" + cu + "times" + c + " - count of consecutive measurements, which are\n\t\tused to reduce the value volatility\n" +
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 {
     std::stringstream welcome;
 
-    welcome << "HX711 driver, version " << applicationVersion << "\n\tCopyright 2018 Tulpa Automatics\n";
+    welcome << "HX711 driver, version " << applicationVersion << "\n\tCopyright 2019 Tulpa Automatics\n";
 
     std::cerr << welcome.str() << std::endl;
 
