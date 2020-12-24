@@ -24,10 +24,11 @@ You'll get `hx711` executable file.
 
 Format:
 ```sh
-./hx711 <human_mode> <offset> <alignment_string> <moving_average> <times> <dout> <sck> <deviation_factor> <deviation_value> <retries> <use_ta_filter> <use_kalman_filter> <kalman_q> <kalman_r> <kalman_f> <kalman_h> <temperature_filename> <temperature_factor> <base_temperature> <debug>
+./hx711 <human_mode> <correction_factor> <offset> <alignment_string> <moving_average> <times> <dout> <sck> <deviation_factor> <deviation_value> <retries> <use_ta_filter> <use_kalman_filter> <kalman_q> <kalman_r> <kalman_f> <kalman_h> <temperature_filename> <temperature_factor> <base_temperature> <debug>
 ```
 
 * **int** _human mode_ - 0 - Normal mode, 1 - Human mode (input and output all values as decimal except alignment string)
+* **double** (Human mode) **string** _correction factor_ - correction factor, multiplies to a result value
 * **int** _offset_ - result offset, appends to a result value
 * **char** <strong>*</strong> _alignment_string_ - ascii-coded 16 bytes of `double` `k` and `b` factors from `y = k * x + b`
 * **unsigned int** _times_ - count of consecutive measurements, which are used to reduce the value volatility

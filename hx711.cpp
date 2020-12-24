@@ -53,13 +53,15 @@ void edge()
         instance->setReading(false);
 }
 
-HX711::HX711(const int dout, const int sck, const double offset, const unsigned int movingAverageSize, const unsigned int times, const double k, const double b,
-             const bool useTAFilter, const int deviationFactor, const int deviationValue, const unsigned int retries, const bool useKalmanFilter,
-             const double kalmanQ, const double kalmanR, const double kalmanF, const double kalmanH, const bool debug, const bool humanMode,
-             const char *filename, const double temperatureFactor, const int baseTemperature)
+HX711::HX711(const int dout, const int sck, const double correctionFactor, const double offset,
+             const unsigned int movingAverageSize, const unsigned int times, const double k, const double b,
+             const bool useTAFilter, const int deviationFactor, const int deviationValue, const unsigned int retries,
+             const bool useKalmanFilter, const double kalmanQ, const double kalmanR, const double kalmanF, const double kalmanH,
+             const bool debug, const bool humanMode, const char *filename, const double temperatureFactor,
+             const int baseTemperature)
 {
     m_working = true;
-    m_k = k;
+    m_k = k * correctionFactor;
     m_b = b + offset;
 
     m_deviationFactor = deviationFactor ? deviationFactor / 100.0 : 0;
