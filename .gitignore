@@ -7,6 +7,9 @@
 config.h
 hx711
 
+/build
+/cmake-build-*
+
 # cmake/make files
 Makefile
 CMakeCache.txt

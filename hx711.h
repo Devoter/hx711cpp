@@ -27,6 +27,8 @@ class HX711 {
 
     double m_k;
     double m_b;
+    double m_correctionFactor;
+    double m_offset;
 
     unsigned int m_retries;
     unsigned int m_tries;
@@ -48,10 +50,12 @@ class HX711 {
     std::shared_ptr<std::thread> m_temperatureReader;
 
 public:
-    HX711(const int dout, const int sck, const double offset, const unsigned int movingAverageSize, const unsigned int times, const double k, const double b,
-          const bool useTAFilter, const int deviationFactor, const int deviationValue, const unsigned int retries, const bool useKalmanFilter,
-          const double kalmanQ, const double kalmanR, const double kalmanF, const double kalmanH, const bool debug, const bool humanMode, const char *filename,
-          const double temperatureFactor, const int baseTemperature);
+    HX711(const int dout, const int sck, const double correctionFactor, const double offset,
+          const unsigned int movingAverageSize, const unsigned int times, const double k, const double b,
+          const bool useTAFilter, const int deviationFactor, const int deviationValue, const unsigned int retries,
+          const bool useKalmanFilter, const double kalmanQ, const double kalmanR, const double kalmanF, const double kalmanH,
+          const bool debug, const bool humanMode, const char *filename, const double temperatureFactor,
+          const int baseTemperature);
     virtual ~HX711();
 
     inline int dout() { return m_dout; }
@@ -77,10 +81,14 @@ public:
 protected:
     void pushValue(const double &value);
     bool taFilter(const double &value);
-    inline double align(const double &value) { return (value + (m_temperature - m_baseTemperature) * m_temperatureFactor) * m_k + m_b; }
+    inline double align(const double &value)
+    {
+        return (value + (m_temperature - m_baseTemperature) * m_temperatureFactor) * m_k + m_b;
+    }
     inline int align(const double &value, const bool integer)
     {
-        return std::round((value + (m_temperature - m_baseTemperature) * m_temperatureFactor) * m_k + m_b);
+        return std::round(((value + (m_temperature - m_baseTemperature) * m_temperatureFactor) * m_k + m_b) *
+            m_correctionFactor + m_offset);
     }
     static void readTemperature(HX711 *instance, const char *filename);
 };
