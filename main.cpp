@@ -50,6 +50,7 @@ std::string help()
            tb + "int" + cu + "offset" + c + " - result offset, appends to a result value\n" +
            tb + "char*" + cu + "alignment string" + c + " - ascii-coded 16 bytes of " + b + "double" + ' ' + w + 'k' + c + " and " +
            w + 'b' + c + '\n' + "\t\tfactors from " + w + "y = k * x + b" + c + '\n' +
+           tb + "unsigned int" + cu + "moving average" + c + " - moving average size\n" +
            tb + "unsigned int" + cu + "times" + c + " - count of consecutive measurements, which are\n\t\tused to reduce the value volatility\n" +
            tb + "unsigned int" + cu + "dout" + c + " - _data out_ pin number (BCM)\n" +
            tb + "unsigned int" + cu + "sck" + c + " - _serial clock_ pin number (BCM)\n" +

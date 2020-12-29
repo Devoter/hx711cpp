@@ -31,6 +31,7 @@ Format:
 * **double** (Human mode) **string** _correction factor_ - correction factor, multiplies to a result value
 * **int** _offset_ - result offset, appends to a result value
 * **char** <strong>*</strong> _alignment_string_ - ascii-coded 16 bytes of `double` `k` and `b` factors from `y = k * x + b`
+* **unsigned int** _moving average_ - moving average size
 * **unsigned int** _times_ - count of consecutive measurements, which are used to reduce the value volatility
 * **unsigned int** _dout_ - _data out_ pin number (BCM)
 * **unsigned int** _sck_ - _serial clock_ pin number (BCM)
