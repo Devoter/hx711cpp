@@ -61,8 +61,10 @@ HX711::HX711(const int dout, const int sck, const double correctionFactor, const
              const int baseTemperature)
 {
     m_working = true;
-    m_k = k * correctionFactor;
-    m_b = b + offset;
+    m_k = k;
+    m_b = b;
+    m_correctionFactor = correctionFactor;
+    m_offset = offset;
 
     m_deviationFactor = deviationFactor ? deviationFactor / 100.0 : 0;
     m_deviationValue = deviationValue;

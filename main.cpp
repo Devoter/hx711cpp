@@ -46,7 +46,7 @@ std::string help()
                        "\t<temperature_factor> <base_temperature> <debug>\n\n") +
            tb + "int" + cu + "human mode" + c + " - " + w + '0' + c + " - Normal mode, " + w + '1' + c + " - Human mode\n" +
            "\t\t(input and output all values as decimal except alignment string)\n" +
-           tb + "double" + c + " (Human mode) " + b + "string" + cu + "correction factor" + c + " - correction factor, multiplies to a result value" +
+           tb + "double" + c + " (Human mode) " + b + "string" + cu + "correction factor" + c + " - correction factor, multiplies to a result value\n" +
            tb + "int" + cu + "offset" + c + " - result offset, appends to a result value\n" +
            tb + "char*" + cu + "alignment string" + c + " - ascii-coded 16 bytes of " + b + "double" + ' ' + w + 'k' + c + " and " +
            w + 'b' + c + '\n' + "\t\tfactors from " + w + "y = k * x + b" + c + '\n' +
@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 
     std::cerr << welcome.str() << std::endl;
 
-    if (argc != 21) {
+    if (argc != 22) {
         std::cerr << "No enough parameters" << help() << std::endl;
         return 1;
     }

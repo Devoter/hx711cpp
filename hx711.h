@@ -27,6 +27,8 @@ class HX711 {
 
     double m_k;
     double m_b;
+    double m_correctionFactor;
+    double m_offset;
 
     unsigned int m_retries;
     unsigned int m_tries;
@@ -85,7 +87,8 @@ protected:
     }
     inline int align(const double &value, const bool integer)
     {
-        return std::round((value + (m_temperature - m_baseTemperature) * m_temperatureFactor) * m_k + m_b);
+        return std::round(((value + (m_temperature - m_baseTemperature) * m_temperatureFactor) * m_k + m_b) *
+            m_correctionFactor + m_offset);
     }
     static void readTemperature(HX711 *instance, const char *filename);
 };
