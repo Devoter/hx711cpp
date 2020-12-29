@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 {
     std::stringstream welcome;
 
-    welcome << "HX711 driver, version " << applicationVersion << "\n\tCopyright 2019 Tulpa Automatics\n";
+    welcome << "HX711 driver, version " << applicationVersion << "\n\tCopyright 2020 Tulpa Automatics\n";
 
     std::cerr << welcome.str() << std::endl;
 
