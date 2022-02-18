@@ -50,3 +50,7 @@ Format:
 * **int** _debug_ - 0 - disable debug, 1 - enable (debug messages outputs to stderr)
 
 In Normal mode program writes an ascii-coded `double` values to `stdout`.
+
+## License
+
+[LICENSE](./LICENSE) LGPLv3.
